@@ -1,0 +1,12 @@
+version: 2
+
+models:
+  - name: mart_customer_lifetime_value
+    description: "Your description here"
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+      - name: lifetime_value
+        tests:
+          - not_null
