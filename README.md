@@ -60,7 +60,57 @@ The task was to build a “Customer Lifetime Value” (CLV) data mart that calcu
     
 - Using Python, connect to Snowflake and load the data
     - Run the python script `load_data_into_snowflake.py`:
+        ```python
+        import snowflake.connector
+
+        # establish a connection to Snowflake
+        conn = snowflake.connector.connect(
+            account='REDACTED',
+            user='REDACTED',
+            password='REDACTED',
+            database='REDACTED',
+            schema='REDACTED',
+            role='REDACTED'
+        )
         
+        # create a cursor object
+        cur = conn.cursor()
+        
+        try:
+            # upload invoices.csv file to Snowflake stage
+            cur.execute("PUT file:///Users/christinatran/Desktop/going_data_engineer_assessment/invoices.csv @my_file_stage AUTO_COMPRESS=TRUE;")
+        
+            # copy the staged invoices data into the invoices table in Snowflake
+            copy_invoices = """
+            COPY INTO invoices 
+            FROM @my_file_stage/invoices.csv.gz
+            FILE_FORMAT=(TYPE='CSV' FIELD_OPTIONALLY_ENCLOSED_BY='"' SKIP_HEADER=1)
+            ON_ERROR = 'CONTINUE';
+            """
+        
+            cur.execute(copy_invoices)
+        
+            # upload customers.csv file to Snowflake stage
+            cur.execute("PUT file:///Users/christinatran/Desktop/going_data_engineer_assessment/customers.csv @my_file_stage AUTO_COMPRESS=TRUE;")
+        
+            # copy the staged customers data into the customers table in Snowflake
+            copy_customers = """
+            COPY INTO customers
+            FROM @my_file_stage/customers.csv.gz
+            FILE_FORMAT=(TYPE='CSV' FIELD_OPTIONALLY_ENCLOSED_BY='"' SKIP_HEADER=1)
+            ON_ERROR = 'CONTINUE';
+            """
+        
+            cur.execute(copy_customers)
+        
+        finally:
+            # close the cursor
+            cur.close()
+        
+        # close the connection
+        conn.close()
+        ```
+  
         ```bash
         python load_data_into_snowflake.py
         ```
