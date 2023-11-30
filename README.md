@@ -1,5 +1,3 @@
-# Take-Home Assessment
-
 # Objective
 
 The task was to build a “Customer Lifetime Value” (CLV) data mart that calculates the average amount a customer has spent with the company since signing up. I built a simplified ELT pipeline, performing data transformation using dbt and leveraging Snowflake as the data warehouse. 
